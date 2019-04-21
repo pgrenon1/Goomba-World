@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 /* link to Leaderboard http://dreamlo.com/lb/y20euAK17kW263WHBMHfugDBx8lsbNY0qYlhUD2_sIuQ */
@@ -41,7 +42,7 @@ public class LeaderboardManager : MonoBehaviour {
 
     IEnumerator UploadNewHighscore(string username, int score)
     {
-        WWW www = new WWW(webURL + privateCode + "/add/" + WWW.EscapeURL(username) + "/" + score);
+        UnityWebRequest www = new UnityWebRequest(webURL + privateCode + "/add/" + UnityWebRequest.EscapeURL(username) + "/" + score);
         yield return www;
 
         if (string.IsNullOrEmpty(www.error))
@@ -59,11 +60,11 @@ public class LeaderboardManager : MonoBehaviour {
 
     IEnumerator DownloadHighscoresFromDatabase()
     {
-        WWW www = new WWW(webURL + publicCode + "/pipe/");
-        yield return www;
+        UnityWebRequest www = UnityWebRequest.Get(webURL + publicCode + "/pipe/");
+        yield return www.SendWebRequest();
 
         if (string.IsNullOrEmpty(www.error))
-            FormatHighscores(www.text);
+            FormatHighscores(www.downloadHandler.text);
         else
         {
             print("Error Downloading: " + www.error);

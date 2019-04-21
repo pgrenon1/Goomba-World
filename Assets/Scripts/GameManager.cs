@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 using DG.Tweening;
+using TMPro;
 
 public class GameManager : MonoBehaviour {
 
@@ -23,12 +24,12 @@ public class GameManager : MonoBehaviour {
     public Spawner Spawner { get { if (_spawner == null) { _spawner = FindObjectOfType<Spawner>(); } return _spawner; } }
     private Player _player;
     public Player Player { get { if (_player == null) { _player = FindObjectOfType<Player>(); } return _player; } }
-    private Text _scoreText;
-    public Text ScoreText { get { if (_scoreText == null) { _scoreText = GameObject.FindGameObjectWithTag("Score").GetComponent<Text>(); } return _scoreText; } }
-    private Text _highscoreText;
-    public Text HighscoreText { get { if (_highscoreText == null) { _highscoreText = GameObject.FindGameObjectWithTag("Highscore").GetComponent<Text>(); } return _highscoreText; } }
-    private Text _leaderScore;
-    public Text LeaderScore { get { if (_leaderScore == null) { _leaderScore = GameObject.FindGameObjectWithTag("Leader Statement").GetComponent<Text>(); } return _leaderScore; } }
+    private TextMeshProUGUI _scoreText;
+    public TextMeshProUGUI ScoreText { get { if (_scoreText == null) { _scoreText = GameObject.FindGameObjectWithTag("Score").GetComponent<TextMeshProUGUI>(); } return _scoreText; } }
+    private TextMeshProUGUI _highscoreText;
+    public TextMeshProUGUI HighscoreText { get { if (_highscoreText == null) { _highscoreText = GameObject.FindGameObjectWithTag("Highscore").GetComponent<TextMeshProUGUI>(); } return _highscoreText; } }
+    private TextMeshProUGUI _leaderScore;
+    public TextMeshProUGUI LeaderScore { get { if (_leaderScore == null) { _leaderScore = GameObject.FindGameObjectWithTag("Leader Statement").GetComponent<TextMeshProUGUI>(); } return _leaderScore; } }
 
     public GameObject IdWindow;
     public InputField NameField;
@@ -203,9 +204,9 @@ public class GameManager : MonoBehaviour {
 
         _achievementsManager.UpdateTotalPointsAchievements(Score);
 
-        foreach (Goomba goomba in Spawner.transform.GetComponentsInChildren<Goomba>())
+        foreach (Enemy enemy in Spawner.transform.GetComponentsInChildren<Enemy>())
         {
-            goomba.Stop();
+            enemy.Stop();
         }
 
         yield return new WaitForSeconds(1);

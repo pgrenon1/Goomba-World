@@ -15,20 +15,26 @@ public class Player : MonoBehaviour {
     public Sprite IdleSprite;
 
     private SpriteRenderer _spriteRend;
-    
-	// Use this for initialization
-	void Start () {
+    private bool sendingShockwave = false;
+
+    // Use this for initialization
+    void Start() {
         _spriteRend = GetComponentInChildren<SpriteRenderer>();
     }
-	
-	// Update is called once per frame
-	void Update () {
 
+    // Update is called once per frame
+    void Update() {
+
+    }
+
+    private void OnMouseDown()
+    {
+        Shockwave();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<Goomba>())
+        if (other.GetComponent<Enemy>())
         {
             StartCoroutine(GameManager.Instance.Die());
         }
@@ -38,24 +44,39 @@ public class Player : MonoBehaviour {
     {
         if (GameManager.Instance.Paused) return;
 
-        if (side == 1)
+        if (!sendingShockwave)
         {
-            _spriteRend.sprite = DashingSprite;
-            _spriteRend.flipX = false;
-            transform.DOBlendableMoveBy(new Vector3(DashDistance, 0,0), DashDuration).OnComplete(EndDash);
+
+            transform.DOScale(Vector3.one / 3 * 2, DashDuration / 2).OnComplete(() => transform.DOScale(Vector3.one, DashDuration / 2));
+            if (side == 1)
+            {
+                _spriteRend.sprite = DashingSprite;
+                _spriteRend.flipX = false;
+                transform.DOBlendableMoveBy(new Vector3(DashDistance, 0,0), DashDuration).OnComplete(EndDash);
+            }
+            else
+            {
+                _spriteRend.sprite = DashingSprite;
+                _spriteRend.flipX = true;
+                transform.DOBlendableMoveBy(new Vector3(-DashDistance, 0, 0), DashDuration).OnComplete(EndDash);
+            }
         }
-        else
-        {
-            _spriteRend.sprite = DashingSprite;
-            _spriteRend.flipX = true;
-            transform.DOBlendableMoveBy(new Vector3(-DashDistance, 0, 0), DashDuration).OnComplete(EndDash);
-        }
+
+        sendingShockwave = false;
     }
 
     public void Shockwave()
     {
+        sendingShockwave = true;
         var newShockwave = Instantiate(ShockwavePrefab, transform);
-        newShockwave.transform.DOScale(Vector3.one * 30, 2f).OnComplete(() => Destroy(newShockwave));
+        transform.DOScale(0.2f, 0.3f).OnComplete(() => ScaleBackUpAndShakeCam());
+        newShockwave.transform.DOScale(0.2f, 0.3f).OnComplete(() => newShockwave.transform.DOScale(Vector3.one * 30, 2f).OnComplete(() => Destroy(newShockwave)));
+    }
+
+    private void ScaleBackUpAndShakeCam()
+    {
+        transform.DOScale(1, 0.3f);
+        Camera.main.transform.DOPunchRotation(Vector3.one / 3, 0.5f);
     }
 
     void EndDash()

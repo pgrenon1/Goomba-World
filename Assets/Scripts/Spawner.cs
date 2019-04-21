@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Spawner : MonoBehaviour
 {
-    public GameObject GoombaPrefab;
+    public GameObject[] EnemyPrefabs;
     public float Speed;
     public float SpeedGrowth;
     public float MinTimer;
@@ -49,9 +49,9 @@ public class Spawner : MonoBehaviour
 
     void Spawn()
     {
-        GameObject newGoomba = Instantiate(GoombaPrefab, Camera.main.ViewportToWorldPoint(new Vector3(Random.Range(0f, 1f), 1, 10)), Quaternion.identity, transform);
+        GameObject newEnemy = Instantiate(EnemyPrefabs[Random.Range(0,EnemyPrefabs.Length)], Camera.main.ViewportToWorldPoint(new Vector3(Random.Range(0f, 1f), 1, 10)), Quaternion.identity, transform);
         float randomFloat = Random.Range(0.5f, 1.5f);
-        newGoomba.transform.localScale = new Vector3(randomFloat, randomFloat, 0);
-        newGoomba.transform.DOMoveY(-7, Speed * (GameManager.Instance.Level * SpeedGrowth) ).SetSpeedBased(true).SetEase(Ease.Linear);
+        newEnemy.transform.localScale = new Vector3(randomFloat, randomFloat, 0);
+        newEnemy.transform.DOMoveY(-7, Speed * (GameManager.Instance.Level * SpeedGrowth) ).SetSpeedBased(true).SetEase(Ease.Linear);
     }
 }
